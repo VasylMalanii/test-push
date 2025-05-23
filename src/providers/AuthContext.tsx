@@ -33,7 +33,9 @@ function AuthProvider({ children }: ComponentLayoutProviderProps) {
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthorized: !!accessToken, accessToken, setTokens, clearTokens }}>
+    <AuthContext.Provider
+      value={{ isAuthorized: !!accessToken, accessToken, setTokens, clearTokens }}
+    >
       {children}
     </AuthContext.Provider>
   );

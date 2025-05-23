@@ -6,7 +6,7 @@ const Colors = {
   grey: '#999',
   border: '#ddd',
   white: '#fff',
-  text: '#000'
+  text: '#000',
 };
 
 export default Colors;

@@ -1,4 +1,4 @@
-import { SafeAreaView, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native';
 import Button from '@components/Button';
 import GlobalStyles from '@styles/global';
 import { useForm } from 'react-hook-form';
@@ -10,6 +10,7 @@ import { StackActions, useNavigation } from '@react-navigation/native';
 import ROUTES from '@constants/routes';
 import { useContext } from 'react';
 import { AuthContext } from '@providers/AuthContext';
+import ScreenWrapper from '@components/ScreenWrapper';
 
 type ILoginForm = {
   username: string;
@@ -17,7 +18,11 @@ type ILoginForm = {
 };
 
 export default function LoginScreen() {
-  const { control, handleSubmit } = useForm<ILoginForm>({
+  const {
+    control,
+    handleSubmit,
+    formState: { isValid },
+  } = useForm<ILoginForm>({
     defaultValues: {
       username: '',
       password: '',
@@ -38,11 +43,11 @@ export default function LoginScreen() {
     },
   });
 
-  const onSubmit = (data: ILoginForm) => mutate(data);
+  const onSubmit = handleSubmit((data: ILoginForm) => mutate(data));
 
   return (
-    <SafeAreaView style={GlobalStyles.fullPage}>
-      <ScrollView style={GlobalStyles.fullPage} contentContainerStyle={GlobalStyles.centeredPage}>
+    <SafeAreaView style={GlobalStyles.safeArea}>
+      <ScreenWrapper verticalCenterAlign>
         <FormTextField
           name="username"
           control={control}
@@ -50,6 +55,8 @@ export default function LoginScreen() {
             required: 'Username is required',
           }}
           label="Username"
+          autoCapitalize="none"
+          returnKeyType="next"
         />
         <FormTextField
           name="password"
@@ -59,10 +66,12 @@ export default function LoginScreen() {
           }}
           label="Password"
           secureTextEntry
+          autoCapitalize="none"
+          onSubmitEditing={onSubmit}
         />
         {loginError && <ErrorMessage text={loginError?.message} />}
-        <Button onPress={handleSubmit(onSubmit)} text="Login" disabled={isPending} />
-      </ScrollView>
+        <Button onPress={onSubmit} text="Login" disabled={!isValid} isLoading={isPending} />
+      </ScreenWrapper>
     </SafeAreaView>
   );
 }

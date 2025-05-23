@@ -1,18 +1,33 @@
 import React from 'react';
-import {Text, Pressable, StyleSheet, PressableProps, View} from 'react-native';
+import {
+  Text,
+  Pressable,
+  StyleSheet,
+  PressableProps,
+  View,
+  StyleProp,
+  ViewStyle,
+  ActivityIndicator,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Colors from '@styles/colors';
 
 type ButtonProps = PressableProps & {
   type?: 'default' | 'secondary';
   text: string;
+  style?: StyleProp<ViewStyle>;
+  isLoading?: boolean;
 };
 
 function Button(props: ButtonProps) {
-  const { type = 'default', text, ...buttonProps } = props;
+  const { type = 'default', text, style, disabled, isLoading, ...buttonProps } = props;
 
   return (
-    <Pressable {...buttonProps} style={styles.buttonWrapper}>
+    <Pressable
+      {...buttonProps}
+      style={[styles.buttonWrapper, disabled ? styles.buttonWrapperDisabled : null, style]}
+      disabled={disabled}
+    >
       {({ pressed }) => (
         <>
           {type === 'default' && (
@@ -22,11 +37,15 @@ function Button(props: ButtonProps) {
               end={{ x: 1, y: 0 }}
               style={[styles.button, pressed ? styles.buttonPressed : null]}
             >
+              {isLoading && <ActivityIndicator size="small" color={Colors.white} />}
               <Text style={styles.text}>{text}</Text>
             </LinearGradient>
           )}
           {type === 'secondary' && (
-            <View style={[styles.button, styles.buttonSecondary, pressed ? styles.buttonPressed : null]}>
+            <View
+              style={[styles.button, styles.buttonSecondary, pressed ? styles.buttonPressed : null]}
+            >
+              {isLoading && <ActivityIndicator size="small" color={Colors.text} />}
               <Text style={[styles.text, styles.textSecondary]}>{text}</Text>
             </View>
           )}
@@ -42,11 +61,16 @@ const styles = StyleSheet.create({
   buttonWrapper: {
     width: '100%',
   },
+  buttonWrapperDisabled: {
+    opacity: 0.6,
+  },
   button: {
     paddingVertical: 14,
     paddingHorizontal: 20,
     borderRadius: 45,
-    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 8,
   },
   buttonPressed: {
     opacity: 0.75,
